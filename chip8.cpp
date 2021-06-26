@@ -1,0 +1,75 @@
+#include "chip8.h"
+#include <fstream>
+unsigned char chip8_fontset[80] =
+{ 
+  0xF0, 0x90, 0x90, 0x90, 0xF0, // 0
+  0x20, 0x60, 0x20, 0x20, 0x70, // 1
+  0xF0, 0x10, 0xF0, 0x80, 0xF0, // 2
+  0xF0, 0x10, 0xF0, 0x10, 0xF0, // 3
+  0x90, 0x90, 0xF0, 0x10, 0x10, // 4
+  0xF0, 0x80, 0xF0, 0x10, 0xF0, // 5
+  0xF0, 0x80, 0xF0, 0x90, 0xF0, // 6
+  0xF0, 0x10, 0x20, 0x40, 0x40, // 7
+  0xF0, 0x90, 0xF0, 0x90, 0xF0, // 8
+  0xF0, 0x90, 0xF0, 0x10, 0xF0, // 9
+  0xF0, 0x90, 0xF0, 0x90, 0x90, // A
+  0xE0, 0x90, 0xE0, 0x90, 0xE0, // B
+  0xF0, 0x80, 0x80, 0x80, 0xF0, // C
+  0xE0, 0x90, 0x90, 0x90, 0xE0, // D
+  0xF0, 0x80, 0xF0, 0x80, 0xF0, // E
+  0xF0, 0x80, 0xF0, 0x80, 0x80  // F
+};
+
+
+chip8::chip8() {
+
+};
+
+void chip8::emulateCycle() {
+    // Fetch opcode
+    opcode = memory[pc] << 8 | memory[pc + 1];
+};
+
+bool chip8::loadApplication(const char * fileName) {
+    FILE *gameFile = fopen(fileName, "rb");
+
+    if (gameFile == NULL) {
+        return false;
+    }
+
+    std::ifstream input(fileName, std::ios::binary);
+    input.seekg(0, std::ios::end);
+    int bufferSize = input.tellg();
+    
+    for(int i = 0; i < bufferSize; i++) {
+        
+    }
+
+
+};
+
+chip8::~chip8() {
+
+};
+
+void chip8::init() {
+    pc = 0x200; // program counter begins at 0x200
+
+    // Reset current opcode, index register, and stack pointer
+    opcode = 0;
+    I = 0;
+    sp = 0;
+
+    // Clear display
+    // Clear stack
+    // Clear registers V0-VF
+    // Clear memory
+
+    // Load fontset
+    for (int i = 0; i < 80; i++) {
+        memory[i] = chip8_fontset[i];
+    }
+
+    // Reset timers
+}
+
