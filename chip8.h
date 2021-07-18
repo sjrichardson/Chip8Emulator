@@ -1,44 +1,48 @@
-///////////////////////////////////////////////////////////////////////////////
-// Project description
-// ØØØØØØØØØØØØØØØØØØØ
-// Name: myChip8
-//
-// Author: Laurence Muller
-// Contact: laurence.muller@gmail.com
-//
-// License: GNU General Public License (GPL) v2 
-// ( http://www.gnu.org/licenses/old-licenses/gpl-2.0.html )
-//
-// Copyright (C) 2011 Laurence Muller / www.multigesture.net
-///////////////////////////////////////////////////////////////////////////////
+// Emulator Constants
+const unsigned int START_ADDRESS = 0x200;
+const unsigned int FONTSET_SIZE = 80;
+const unsigned int FONTSET_START_ADDRESS = 0x50;
+unsigned char chip8_fontset[FONTSET_SIZE] =
+{ 
+  0xF0, 0x90, 0x90, 0x90, 0xF0, // 0
+  0x20, 0x60, 0x20, 0x20, 0x70, // 1
+  0xF0, 0x10, 0xF0, 0x80, 0xF0, // 2
+  0xF0, 0x10, 0xF0, 0x10, 0xF0, // 3
+  0x90, 0x90, 0xF0, 0x10, 0x10, // 4
+  0xF0, 0x80, 0xF0, 0x10, 0xF0, // 5
+  0xF0, 0x80, 0xF0, 0x90, 0xF0, // 6
+  0xF0, 0x10, 0x20, 0x40, 0x40, // 7
+  0xF0, 0x90, 0xF0, 0x90, 0xF0, // 8
+  0xF0, 0x90, 0xF0, 0x10, 0xF0, // 9
+  0xF0, 0x90, 0xF0, 0x90, 0x90, // A
+  0xE0, 0x90, 0xE0, 0x90, 0xE0, // B
+  0xF0, 0x80, 0x80, 0x80, 0xF0, // C
+  0xE0, 0x90, 0x90, 0x90, 0xE0, // D
+  0xF0, 0x80, 0xF0, 0x80, 0xF0, // E
+  0xF0, 0x80, 0xF0, 0x80, 0x80  // F
+};
 
+// Chip 8
 class chip8 {
 	public:
 		chip8();
 		~chip8();
-		
-		bool drawFlag;
 
 		void emulateCycle();
-		void debugRender();
+		void init();
 		bool loadApplication(const char * filename);		
 
-// Chip8
-		unsigned char  gfx[64 * 32];	// Total amount of pixels: 2048
-		unsigned char  key[16];			
+		uint8_t registers[16]{};
+		uint8_t memory[4096]{};
+		uint16_t index{};
+		uint16_t pc{};
+		uint16_t stack[16]{};
+		uint8_t sp{};
+		uint8_t delayTmer{};
+		uint8_t soundTimer{};
+		uint8_t keypad[16]{};
+		uint32_t video[64 *32]{};
+		uint16_t opcode;
 
-	private:	
-		unsigned short pc;				// Program counter
-		unsigned short opcode;			// Current opcode
-		unsigned short I;				// Index register
-		unsigned short sp;				// Stack pointer
-		
-		unsigned char  V[16];			// V-regs (V0-VF)
-		unsigned short stack[16];		// Stack (16 levels)
-		unsigned char  memory[4096];	// Memory (size = 4k)		
-				
-		unsigned char  delay_timer;		// Delay timer
-		unsigned char  sound_timer;		// Sound timer		
 
-		void init();
 };
