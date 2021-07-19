@@ -1,8 +1,10 @@
 #include "chip8.h"
 #include <fstream>
 
-chip8::chip8() {
+chip8::chip8():randGen(std::chrono::system_clock::now().time_since_epoch().count()) {
 
+    // Init RNG
+    randByte = std::uniform_int_distribution<uint8_t>(0,255U);
 };
 
 void chip8::emulateCycle() {
@@ -62,3 +64,74 @@ void chip8::init() {
     // Reset timers
 }
 
+// Clear display
+void chip8::OP_00E0() {
+    memset(video, 0, sizeof(video));
+}
+
+// Return from a subroutine
+void chip8::OP_00EE() {
+    --sp;
+    pc = stack[sp];
+}
+
+// Jump to location nnn
+void chip8::OP_1nnn() {
+    uint16_t address = opcode & 0x0FFFu;
+
+    pc = address;
+}
+
+// Call subroutine at nnn
+void chip8::OP_2nnn() {
+    uint16_t address = opcode & 0x0FFFu;
+    
+    stack[sp++] = pc;
+    pc = address;
+}
+
+// Skip next instruction if Vx = kk
+void chip8::OP_3xkk() {
+    uint8_t Vx = (opcode & 0x0F00u) >> 8u;
+    uint8_t byte = opcode & 0x00FFu;
+
+    if (registers[Vx] == byte) {
+        pc += 2;
+    }
+}
+
+// Skip next instruction if Vx != kk
+void chip8::OP_4xkk() {
+    uint8_t Vx = (opcode & 0x0F00u) >> 8u;
+    uint8_t byte = opcode & 0x00FFu;
+
+    if (registers[Vx] != byte) {
+        pc += 2;
+    }
+}
+
+// Skip next instruction if Vx = Vy
+void chip8::OP_5xy0() {
+    uint8_t Vx = (opcode & 0x0F00u) >> 8u;
+    uint8_t Vy = (opcode & 0x00F0u) >> 4u;
+
+    if (registers[Vx] == registers[Vy]) {
+        pc += 2;
+    }
+}
+
+// Set Vx = kk
+void chip8::OP_6xkk() {
+    uint8_t Vx = (opcode & 0x0F00u) >> 8u;
+    uint8_t byte = opcode & 0x00FFu;
+
+    registers[Vx] = byte;
+}
+
+// Set Vx = Vx + kk
+void chip8::OP_7xkk {
+    uint8_t Vx = (opcode & 0x0F00u) >> 8u;
+    uint8_t byte = opcode & 0x00FFu;
+
+    registers[Vx] += byte;
+}
